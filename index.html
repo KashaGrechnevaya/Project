@@ -32,8 +32,9 @@
     .choice { min-width:0; overflow:hidden; padding:0; border:var(--line); background:var(--paper); color:var(--ink); cursor:pointer; text-align:left; transition:transform .16s ease, box-shadow .16s ease, background .16s ease; }
     .choice:not(:disabled):hover, .choice:not(:disabled):focus-visible { transform:translate(-5px,-5px); box-shadow:6px 6px 0 var(--accent); outline:none; }
     .choice:disabled { cursor:not-allowed; opacity:.62; }
-    .choice img { display:block; width:100%; aspect-ratio:4/3; object-fit:contain; object-position:center; background:#fff; border-bottom:var(--line); }
-    .choice-label { display:flex; justify-content:space-between; padding:13px 14px 14px; font-size:clamp(15px, 2vw, 20px); }
+    .choice-media { width:100%; aspect-ratio:4/3; overflow:hidden; background:#fff; border-bottom:var(--line); }
+    .choice img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; }
+.choice-label { display:flex; justify-content:space-between; padding:13px 14px 14px; font-size:clamp(15px, 2vw, 20px); }
     .choice-label span:last-child { color:var(--accent); }
     .vote-note { min-height:20px; margin-top:13px; color:var(--muted); font-size:13px; line-height:1.25; }
     .result { display:none; border:var(--line); padding:clamp(20px, 4vw, 38px); background:var(--paper); }
@@ -76,7 +77,7 @@
 
   <section class="intro" aria-labelledby="page-title">
     <h1 id="page-title">КАКОЙ ИЗ НИХ<br>НАСТОЯЩИЙ?</h1>
-    <p>В каждой паре одно изображение создано искусственным интеллектом. Выберите его и сразу увидите результат общего голосования.</p>
+    <p>В каждой паре одна настоящая фотография, а второе изображение создано искусственным интеллектом. Выберите настоящую фотографию и сразу увидите результат общего голосования.</p>
   </section>
 
   <main id="polls" aria-live="polite"></main>
@@ -88,9 +89,9 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYyjg2IVhKYNKINUqCgX5BLRPclAtJN93D4UOsAwcM2lDuJ-gtOLKu1hqWuFQzd39P/exec";
 
     const POLLS = [
-      { slug: "grach", title: "Грач", serial: "01", accent: "#ff2828", correct: "A", images: { A: "assets/grach-a.png", B: "assets/grach-b.png" } },
-      { slug: "volk", title: "Волк", serial: "02", accent: "#57a52f", correct: "B", images: { A: "assets/volk-a.webp", B: "assets/volk-b.webp" } },
-      { slug: "osetr", title: "Осётр", serial: "03", accent: "#00a7c8", correct: "A", images: { A: "assets/osetr-a.png", B: "assets/osetr-b.png" } }
+      { slug: "grach", title: "Грач", serial: "01", accent: "#ff2828", aiChoice: "A", images: { A: "assets/grach-a.png", B: "assets/grach-b.png" } },
+      { slug: "volk", title: "Волк", serial: "02", accent: "#57a52f", aiChoice: "B", images: { A: "assets/volk-a.webp", B: "assets/volk-b.webp" } },
+      { slug: "osetr", title: "Осётр", serial: "03", accent: "#00a7c8", aiChoice: "A", images: { A: "assets/osetr-a.png", B: "assets/osetr-b.png" } }
     ];
     const VOTES_KEY = "visual-turing-votes-v1";
     const CLIENT_KEY = "visual-turing-client-id-v1";
@@ -112,6 +113,7 @@
     function saveVotes() { localStorage.setItem(VOTES_KEY, JSON.stringify(localVotes)); }
     function setStatus(message) { document.getElementById("status").textContent = message || ""; }
     function percent(value, total) { return total ? Math.round((value / total) * 100) : 0; }
+    function displayChoice(choice) { return choice === "A" ? "А" : "Б"; }
     function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, (ch) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"})[ch]); }
 
     function pollMarkup(poll) {
@@ -121,9 +123,9 @@
       const note = configured ? "" : "Укажите URL опубликованного Google Apps Script в начале файла, затем опубликуйте страницу.";
       return `<section class="poll" id="${poll.slug}" style="--accent:${poll.accent}" data-state="${answer ? "result" : "question"}" aria-labelledby="${poll.slug}-title">
         <div class="poll-inner">
-          <div class="poll-heading"><div class="serial">${poll.serial} / Опрос</div><div><h2 id="${poll.slug}-title">${poll.title}</h2><p class="question">Какая из фотографий сгенерирована ИИ?</p></div></div>
+          <div class="poll-heading"><div class="serial">${poll.serial} / Опрос</div><div><h2 id="${poll.slug}-title">${poll.title}</h2><p class="question">Какая из фотографий настоящая?</p></div></div>
           <div class="choices" role="group" aria-label="Выберите вариант для опроса ${poll.title}">
-            ${["A", "B"].map((choice) => `<button class="choice" type="button" data-poll="${poll.slug}" data-choice="${choice}" ${unavailable} aria-label="Выбрать вариант ${choice}"><img src="${poll.images[choice]}" alt="Фотография ${choice}, ${poll.title}" loading="lazy"><span class="choice-label"><span>Вариант ${choice}</span><span>Выбрать</span></span></button>`).join("")}
+            ${["A", "B"].map((choice) => `<button class="choice" type="button" data-poll="${poll.slug}" data-choice="${choice}" ${unavailable} aria-label="Выбрать вариант ${displayChoice(choice)}"><span class="choice-media"><img src="${poll.images[choice]}" alt="Фотография ${displayChoice(choice)}, ${poll.title}" loading="lazy"></span><span class="choice-label"><span>Вариант ${displayChoice(choice)}</span><span>Выбрать</span></span></button>`).join("")}
           </div>
           <p class="vote-note">${note}</p>
           <div class="result" data-result-for="${poll.slug}">${result}</div>
@@ -133,15 +135,16 @@
 
     function resultMarkup(poll, choice) {
       const stat = statsBySlug[poll.slug] || { option_a: 0, option_b: 0, total: 0 };
-      const isCorrect = choice === poll.correct;
+      const realChoice = poll.aiChoice === "A" ? "B" : "A";
+      const isCorrect = choice === realChoice;
       const a = Number(stat.option_a || 0), b = Number(stat.option_b || 0), total = Number(stat.total || 0);
       const headline = isCorrect
-        ? "Верно.<br><strong>Это ИИ.</strong>"
-        : "Не совсем.<br><strong>Этот вариант - не ИИ.</strong>";
+        ? "Верно.<br><strong>Это настоящая фотография.</strong>"
+        : "Не совсем.<br><strong>Это изображение создано ИИ.</strong>";
       const note = isCorrect
-        ? "Вы верно определили изображение, созданное ИИ."
-        : "Изображение, созданное ИИ, - вариант " + poll.correct + ".";
-      return `<div class="result-grid"><div><div class="result-label">Ваш ответ: ${choice}</div><h3 class="result-title">${headline}</h3><p class="result-note">${note}</p></div><div class="stats" aria-label="Результаты голосования"><div class="stat-line"><span>А</span><div class="bar"><i style="width:${percent(a, total)}%"></i></div><span>${percent(a, total)}%</span></div><div class="stat-line"><span>Б</span><div class="bar"><i style="width:${percent(b, total)}%"></i></div><span>${percent(b, total)}%</span></div><p class="stat-total">Всего голосов: ${total}</p></div></div>`;
+        ? "Вы верно выбрали настоящую фотографию."
+        : "Настоящая фотография - вариант " + displayChoice(realChoice) + ".";
+      return `<div class="result-grid"><div><div class="result-label">Ваш ответ: ${displayChoice(choice)}</div><h3 class="result-title">${headline}</h3><p class="result-note">${note}</p></div><div class="stats" aria-label="Результаты голосования"><div class="stat-line"><span>А</span><div class="bar"><i style="width:${percent(a, total)}%"></i></div><span>${percent(a, total)}%</span></div><div class="stat-line"><span>Б</span><div class="bar"><i style="width:${percent(b, total)}%"></i></div><span>${percent(b, total)}%</span></div><p class="stat-total">Всего голосов: ${total}</p></div></div>`;
     }
 
     function render() {
