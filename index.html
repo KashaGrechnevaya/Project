@@ -38,8 +38,8 @@
     #grach .choice[data-choice="A"] img { transform:translateY(17%) scale(1.22); transform-origin:left bottom; }
     #grach .choice[data-choice="B"] img { transform:translateY(10%) scale(1.22); transform-origin:right bottom; }
     #volk .choice img { transform:translateY(7%); }
-    #osetr .choice[data-choice="A"] img { transform:translateY(-2%) scale(1.06); transform-origin:center bottom; }
-    #osetr .choice[data-choice="B"] img { transform:translateY(-2%) scale(1.14) scaleX(-1); transform-origin:center bottom; }
+    #osetr .choice[data-choice="A"] img { transform:translateY(-2%) scale(1.14); transform-origin:center bottom; }
+    #osetr .choice[data-choice="B"] img { transform:translateY(-2%) scale(1.06) scaleX(-1); transform-origin:center bottom; }
 .choice-label { display:flex; justify-content:space-between; padding:13px 14px 14px; font-size:clamp(15px, 2vw, 20px); }
     .choice-label span:last-child { color:var(--accent); }
     .vote-note { min-height:20px; margin-top:13px; color:var(--muted); font-size:13px; line-height:1.25; }
@@ -97,7 +97,7 @@
     const POLLS = [
       { slug: "grach", title: "Грач", serial: "01", accent: "#ff2828", aiChoice: "A", images: { A: "assets/grach-a.png", B: "assets/grach-b.png" } },
       { slug: "volk", title: "Волк", serial: "02", accent: "#57a52f", aiChoice: "B", images: { A: "assets/volk-a.webp", B: "assets/volk-b.webp" } },
-      { slug: "osetr", title: "Осётр", serial: "03", accent: "#00a7c8", aiChoice: "A", images: { A: "assets/osetr-a.png", B: "assets/osetr-b.png" } }
+      { slug: "osetr", title: "Осётр", serial: "03", accent: "#00a7c8", aiChoice: "B", images: { A: "assets/osetr-b.png", B: "assets/osetr-a.png" } }
     ];
     const VOTES_KEY = "visual-turing-votes-v1";
     const CLIENT_KEY = "visual-turing-client-id-v1";
