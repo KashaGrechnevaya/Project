@@ -33,7 +33,13 @@
     .choice:not(:disabled):hover, .choice:not(:disabled):focus-visible { transform:translate(-5px,-5px); box-shadow:6px 6px 0 var(--accent); outline:none; }
     .choice:disabled { cursor:not-allowed; opacity:.62; }
     .choice-media { width:100%; aspect-ratio:4/3; overflow:hidden; background:#fff; border-bottom:var(--line); }
-    .choice img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; }
+    .choice img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; transform-origin:center; }
+    /* Индивидуальная подгонка изображений без изменения файлов assets. */
+    #grach .choice[data-choice="A"] img { transform:scale(1.22); transform-origin:left bottom; }
+    #grach .choice[data-choice="B"] img { transform:scale(1.22); transform-origin:right bottom; }
+    #volk .choice img { transform:translateY(7%); }
+    #osetr .choice[data-choice="A"] img { transform:scale(1.06); transform-origin:center bottom; }
+    #osetr .choice[data-choice="B"] img { transform:translateY(-2%) scale(1.14) scaleX(-1); transform-origin:center bottom; }
 .choice-label { display:flex; justify-content:space-between; padding:13px 14px 14px; font-size:clamp(15px, 2vw, 20px); }
     .choice-label span:last-child { color:var(--accent); }
     .vote-note { min-height:20px; margin-top:13px; color:var(--muted); font-size:13px; line-height:1.25; }
