@@ -65,6 +65,12 @@
       .intro { padding-top:46px; }
       .poll-heading { display:block; }
       .serial { padding:0 0 13px; }
+      /* Отдельная подгонка изображений для мобильных экранов. */
+      #grach .choice[data-choice="A"] img { transform:translateY(28%) scale(1.22); transform-origin:left bottom; }
+      #grach .choice[data-choice="B"] img { transform:translateY(21%) scale(1.22); transform-origin:right bottom; }
+      #volk .choice img { transform:translateY(21%); }
+      #osetr .choice[data-choice="A"] img { transform:translateY(-14%) scale(1.14); transform-origin:center bottom; }
+      #osetr .choice[data-choice="B"] img { transform:translateY(-14%) scale(1.06) scaleX(-1); transform-origin:center bottom; }
       .result-grid { grid-template-columns:1fr; gap:29px; }
       .site-footer { display:block; }
       .site-footer span:last-child { display:block; margin-top:9px; }
